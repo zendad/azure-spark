@@ -1,6 +1,6 @@
 # Apache Spark Azure Deployemnt
 
-Automate the deploy process for an Apache Spark cluster on Azure (preferentially), with 1 master node and 2 slave nodes.
+Automate the deploy process for an Apache Spark cluster on Azure with 1 master node and 2 slave nodes.
 
 Apache Spark: https://spark.apache.org
 
