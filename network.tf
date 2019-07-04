@@ -8,19 +8,19 @@ resource "azurerm_virtual_network" "spark" {
 
 #subnets
 resource "azurerm_subnet" "master" {
-  name                      = "${var.vnet_spark_subnet1_name}"
+  name                      = "${var.vnet_spark_master_subnet_name}"
   virtual_network_name      = "${azurerm_virtual_network.spark.name}"
   resource_group_name       = "${azurerm_resource_group.rg.name}"
-  address_prefix            = "${var.vnet_spark_subnet1_prefix}"
+  address_prefix            = "${var.vnet_spark_master_subnet_prefix}"
   network_security_group_id = "${azurerm_network_security_group.master.id}"
   depends_on                = ["azurerm_virtual_network.spark"]
 }
 
 resource "azurerm_subnet" "slave" {
-  name                 = "${var.vnet_spark_subnet2_name}"
+  name                 = "${var.vnet_spark_slave_subnet_name}"
   virtual_network_name = "${azurerm_virtual_network.spark.name}"
   resource_group_name  = "${azurerm_resource_group.rg.name}"
-  address_prefix       = "${var.vnet_spark_subnet2_prefix}"
+  address_prefix       = "${var.vnet_spark_slave_subnet_prefix}"
 }
 
 #public ips
@@ -49,7 +49,7 @@ resource "azurerm_network_interface" "master" {
 
   ip_configuration {
     name                          = "ipconfig1"
-    subnet_id                     = "${azurerm_subnet.subnet1.id}"
+    subnet_id                     = "${azurerm_subnet.master.id}"
     private_ip_address_allocation = "Static"
     private_ip_address            = "${var.nic_master_node_ip}"
     public_ip_address_id          = "${azurerm_public_ip.master.id}"
@@ -66,7 +66,7 @@ resource "azurerm_network_interface" "slave" {
 
   ip_configuration {
     name                          = "ipconfig1"
-    subnet_id                     = "${azurerm_subnet.subnet2.id}"
+    subnet_id                     = "${azurerm_subnet.slave.id}"
     private_ip_address_allocation = "Static"
     private_ip_address            = "${var.nic_slave_node_ip_prefix}${5 + count.index}"
     public_ip_address_id          = "${element(azurerm_public_ip.slave.*.id, count.index)}"

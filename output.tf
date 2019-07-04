@@ -1,5 +1,5 @@
 output "resource_group" {
-  value = "${var.resource_group}"
+  value = "${var.project}"
 }
 
 output "master_ip_address" {
@@ -12,8 +12,4 @@ output "master_ssh_command" {
 
 output "master_web_ui_public_ip" {
   value = "${azurerm_public_ip.master.ip_address}:8080"
-}
-
-output "ssh_user_password" {
-  value = "${random_string.password.result}"
 }

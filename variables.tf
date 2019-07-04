@@ -1,19 +1,11 @@
 provider "azurerm" {
-  subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
-  client_secret   = "${var.client_secret}"
-  tenant_id       = "${var.tenant_id}"
+    subscription_id = "bfc354ee-7eef-4a2c-9455-958c92cbef48"
+    client_id       = "4b79b699-6a0c-476a-8f2d-7f9e9488abdb"
 }
 
 variable "project" {
   description = "This prefix is used to identify and tag resources linked to this project"
   default = "sparkdemo"
-}
-
-resource "random_string" "password" {
-  length = 16
-  special = true
-  override_special = "/@\" "
 }
 
 variable "environment" {
@@ -24,11 +16,6 @@ variable "environment" {
 variable "location" {
   description = "The location/region where project and resources are to be created. Changing this forces a new resource to be created."
   default     = "southcentralus"
-}
-
-variable "resource_group" {
-  description = "Resource group name into which your Spark deployment will go."
-  default    = "${var.project}"
 }
 
 variable "storage_master_account_tier" {
@@ -69,11 +56,6 @@ variable "vm_slave_vm_size" {
 variable "vm_admin_username" {
   description = "Specify an admin username that should be used to login to the VM. Min length: 1"
   default = "sparkuser"
-}
-
-variable "vm_admin_password" {
-  description = "Specify an admin password that should be used to login to the VM. Must be between 6-72 characters long and must satisfy at least 3 of password complexity requirements from the following: 1) Contains an uppercase character 2) Contains a lowercase character 3) Contains a numeric digit 4) Contains a special character"
-  default = "${random_string.password.result}"
 }
 
 variable "os_image_publisher" {

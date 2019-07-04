@@ -1,12 +1,5 @@
-provider "azurerm" {
-  subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
-  client_secret   = "${var.client_secret}"
-  tenant_id       = "${var.tenant_id}"
-}
-
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_group}"
+  name     = "${var.project}"
   location = "${var.location}"
 }
 
@@ -36,7 +29,6 @@ resource "azurerm_virtual_machine" "master" {
   os_profile {
     computer_name  = "${var.vm_master_name}"
     admin_username = "${var.vm_admin_username}"
-    admin_password = "${var.vm_admin_password}"
   }
 
   os_profile_linux_config {
@@ -47,7 +39,6 @@ resource "azurerm_virtual_machine" "master" {
     type     = "ssh"
     host     = "${azurerm_public_ip.master.ip_address}"
     user     = "${var.vm_admin_username}"
-    password = "${var.vm_admin_password}"
   }
 
   provisioner "local-exec" {
@@ -81,9 +72,8 @@ resource "azurerm_virtual_machine" "slave" {
   }
 
   os_profile {
-    computer_name  = ${count.index}"
+    computer_name  = "${count.index}"
     admin_username = "${var.vm_admin_username}"
-    admin_password = "${var.vm_admin_password}"
   }
 
   os_profile_linux_config {
@@ -94,7 +84,6 @@ resource "azurerm_virtual_machine" "slave" {
     type     = "ssh"
     host     = "${element(azurerm_public_ip.slave.*.ip_address, count.index)}"
     user     = "${var.vm_admin_username}"
-    password = "${var.vm_admin_password}"
   }
 
   provisioner "local-exec" {

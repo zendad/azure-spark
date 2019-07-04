@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "master" {
-  name                     = "master${var.unique_prefix}"
+  name                     = "master${var.project}"
   resource_group_name      = "${azurerm_resource_group.rg.name}"
   location                 = "${azurerm_resource_group.rg.location}"
   account_tier             = "${var.storage_master_account_tier}"
@@ -15,7 +15,7 @@ resource "azurerm_storage_container" "master" {
 }
 
 resource "azurerm_storage_account" "slave" {
-  name                     = "slave${var.unique_prefix}${count.index}"
+  name                     = "slave${var.project}${count.index}"
   resource_group_name      = "${azurerm_resource_group.rg.name}"
   location                 = "${azurerm_resource_group.rg.location}"
   count                    = "${var.vm_number_of_slaves}"

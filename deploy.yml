@@ -1,0 +1,22 @@
+---
+- name: Set up Spark master
+  hosts: spark_master
+  remote_user: 
+
+  pre_tasks:
+    - meta: refresh_inventory
+  
+  roles: 
+    - spark-master
+
+- name: Set up spark slave nodes
+  hosts: spark_slaves
+  remote_user: 
+
+  pre_tasks:
+    - meta: refresh_inventory
+
+  roles:
+    - spark-slave
+
+    
