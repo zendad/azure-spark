@@ -81,3 +81,22 @@ resource "azurerm_availability_set" "slave" {
   platform_update_domain_count = 5
   platform_fault_domain_count  = 2
 }
+
+
+data "template_file" "spark_hosts" {
+  template = "${file("${path.module}/roles/templates/spark.cfg")}"
+  depends_on = ["azurerm_virtual_network.spark", "azurerm_public_ip.master", "azurerm_network_security_group.master", "azurerm_public_ip.slave", "azurerm_network_security_group.slave"]
+  vars {
+    ip_master = "${azurerm_public_ip.master.id}"
+    ip_slave  = "${element(azurerm_public_ip.slave.*.id, count.index)}"
+  }
+}
+
+resource "null_resource" "spark-hosts" {
+  triggers {
+    template_rendered = "${data.template_file.spark_hosts.rendered}"
+  }
+  provisioner "local-exec" {
+    command = "echo '${data.template_file.spark_hosts.rendered}' > hosts.ini"
+  }
+}

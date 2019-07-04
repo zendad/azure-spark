@@ -35,7 +35,7 @@
 
 - name: Download Spark binaries
   get_url:
-    url: "{{ spark.release_url }}/spark-{{ spark.version }}-bin-hadoop2.7.tgz"
+    url: "{{ spark.release_url }}/spark-{{ spark.version }}/spark-{{ spark.version }}-bin-hadoop2.7.tgz"
     dest: /tmp
   
 - name: Unpack Spark binaries

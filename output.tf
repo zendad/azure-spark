@@ -6,6 +6,10 @@ output "master_ip_address" {
   value = "${azurerm_public_ip.master.ip_address}"
 }
 
+output "slave_ip_address" {
+  value = ["${azurerm_public_ip.slave.*.id}"]
+}
+
 output "master_ssh_command" {
   value = "ssh ${var.vm_admin_username}@${azurerm_public_ip.master.ip_address}"
 }

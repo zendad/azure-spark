@@ -27,5 +27,4 @@
 # spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
 
 spark.master                        spark://{{ spark.master_address }}:7077
-spark.jars.packages                 datastax:spark-cassandra-connector:{{ spark.cassandra_connector_version }}-s_{{ scala_minor_version }}
-spark.cassandra.connection.host     {{ cassandra.all_nodes }}
+

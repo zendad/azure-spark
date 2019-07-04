@@ -32,17 +32,22 @@ resource "azurerm_virtual_machine" "master" {
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      path = "/home/${var.vm_admin_username}/.ssh/authorized_keys"
+      key_data = "${file("ssh_keys/id_rsa.pub")}"
+    }
   }
 
   connection {
     type     = "ssh"
     host     = "${azurerm_public_ip.master.ip_address}"
     user     = "${var.vm_admin_username}"
+    private_key = "${file("ssh_keys/id_rsa")}"
   }
 
   provisioner "local-exec" {
-    command ="ansible-playbook -i  deploy.yml --private-key=spark.pem --user ${var.vm_admin_username}"
+    command ="ansible-playbook  -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa.pub --user ${var.vm_admin_username}"
   }
 }
 
@@ -77,16 +82,21 @@ resource "azurerm_virtual_machine" "slave" {
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      path = "/home/${var.vm_admin_username}/.ssh/authorized_keys"
+      key_data = "${file("ssh_keys/id_rsa.pub")}"
+    }
   }
 
   connection {
     type     = "ssh"
     host     = "${element(azurerm_public_ip.slave.*.ip_address, count.index)}"
     user     = "${var.vm_admin_username}"
+    private_key = "${file("ssh_keys/id_rsa")}"
   }
 
   provisioner "local-exec" {
-    command ="ansible-playbook -i  deploy.yml --private-key=spark.pem --user ${var.vm_admin_username}"
+    command ="ansible-playbook -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa --user ${var.vm_admin_username}"
   }
 }
