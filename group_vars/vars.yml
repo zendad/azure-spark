@@ -11,7 +11,7 @@ scala_minor_version: "{{ scala.version | regex_replace('^([0-9]+)\\.([0-9]+)\\..
 spark:
   version: "2.3.3"
   release_url: "http://apache.is.co.za/spark/"
-  master_address: 
+  master_address: 10.0.0.5
 
 ulimit:
   soft: 65536
