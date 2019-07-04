@@ -7,7 +7,7 @@ output "master_ip_address" {
 }
 
 output "slave_ip_address" {
-  value = ["${azurerm_public_ip.slave.*.id}"]
+  value = ["${azurerm_public_ip.slave.*.ip_address}"]
 }
 
 output "master_ssh_command" {

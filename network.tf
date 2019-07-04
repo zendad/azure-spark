@@ -87,8 +87,8 @@ data "template_file" "spark_hosts" {
   template = "${file("${path.module}/roles/templates/spark.cfg")}"
   depends_on = ["azurerm_virtual_network.spark", "azurerm_public_ip.master", "azurerm_network_security_group.master", "azurerm_public_ip.slave", "azurerm_network_security_group.slave"]
   vars {
-    ip_master = "${azurerm_public_ip.master.id}"
-    ip_slave  = "${element(azurerm_public_ip.slave.*.id, count.index)}"
+    ip_master = "${azurerm_public_ip.master.ip_address}"
+    ip_slave  = "${join("\n", azurerm_public_ip.slave.*.ip_address)}"
   }
 }
 
