@@ -1,7 +1,12 @@
 ---
 
 - name: 'Install Logrotate'
+  apt: name='logrotate'  state='present'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: 'Install Logrotate'
   yum: name='logrotate'  state='present'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: 'Configure items in /etc/logrotate.d/'
   template:

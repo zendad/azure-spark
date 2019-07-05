@@ -1,9 +1,18 @@
 ---
-- name: Install java
+- name: Install java yum
   become: yes
   yum:
     name: java-1.8.0-openjdk
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: Install java apt
+  become: yes
+  apt:
+    name: openjdk-8-jdk
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Create spark user group
   become: yes
@@ -18,11 +27,19 @@
     group: spark
     state: present
 
-- name: Install scala
+- name: Install scala rpm sys
   become: yes
   yum:
-    name: "{{ scala.release_url }}/scala/{{ scala.version }}/scala-{{ scala.version }}.rpm"
+    name: "{{ scala_release_url }}/scala/{{ scala_version }}/scala-{{ scala_version }}.rpm"
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install scala debian
+  become: yes
+  apt:
+    name: scala
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Create spark directory
   become: yes
@@ -35,15 +52,15 @@
 
 - name: Download Spark binaries
   get_url:
-    url: "{{ spark.release_url }}/spark-{{ spark.version }}/spark-{{ spark.version }}-bin-hadoop2.7.tgz"
+    url: "{{ spark_release_url }}/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
     dest: /tmp
   
 - name: Unpack Spark binaries
   become: yes
   unarchive:
-    creates: "/opt/spark/spark-{{ spark.version }}-bin-hadoop2.7/bin/spark-submit"
+    creates: "/opt/spark/spark-{{ spark_version }}-bin-hadoop2.7/bin/spark-submit"
     remote_src: yes
-    src: "/tmp/spark-{{ spark.version }}-bin-hadoop2.7.tgz"
+    src: "/tmp/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
     dest: /opt/spark
     owner: spark
     group: spark
@@ -52,7 +69,7 @@
   become: yes
   file:
     path: /opt/spark/current
-    src: "/opt/spark/spark-{{ spark.version }}-bin-hadoop2.7"
+    src: "/opt/spark/spark-{{ spark_version }}-bin-hadoop2.7"
     state: link
     owner: spark
     group: spark

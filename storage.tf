@@ -4,6 +4,13 @@ resource "azurerm_storage_account" "master" {
   location                 = "${azurerm_resource_group.rg.location}"
   account_tier             = "${var.storage_master_account_tier}"
   account_replication_type = "${var.storage_master_replication_type}"
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "master${var.project}"
+    technical_owner = "${var.tech_owner}"
+    name = "master${var.project}"
+  }
 }
 
 resource "azurerm_storage_container" "master" {
@@ -21,6 +28,13 @@ resource "azurerm_storage_account" "slave" {
   count                    = "${var.vm_number_of_slaves}"
   account_tier             = "${var.storage_slave_account_tier}"
   account_replication_type = "${var.storage_slave_replication_type}"
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "slave${var.project}${count.index}"
+    technical_owner = "${var.tech_owner}"
+    name = "slave${var.project}${count.index}"
+  }
 }
 
 resource "azurerm_storage_container" "slave" {

@@ -41,6 +41,13 @@ resource "azurerm_network_security_group" "master" {
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "${var.nsg_spark_master_name}"
+    technical_owner = "${var.tech_owner}"
+    name = "${var.nsg_spark_master_name}"
+  }
 }
 
 resource "azurerm_network_security_group" "slave" {
@@ -59,5 +66,13 @@ resource "azurerm_network_security_group" "slave" {
     destination_port_range     = "22"
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
+  }
+
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "${var.nsg_spark_slave_name}"
+    technical_owner = "${var.tech_owner}"
+    name = "${var.nsg_spark_slave_name}"
   }
 }

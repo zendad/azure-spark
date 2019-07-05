@@ -1,17 +1,15 @@
 ---
 
-scala:
-  version: "2.11.8"
-  release_url: "https://downloads.lightbend.com"
+scala_version: "2.11.8"
+scale_release_url: "https://downloads.lightbend.com"
 
 #need this to be a separate variable to avoid recursion error 
 scala_minor_version: "{{ scala.version | regex_replace('^([0-9]+)\\.([0-9]+)\\..*', '\\1\\.\\2')}}"
 
 
-spark:
-  version: "2.3.3"
-  release_url: "http://apache.is.co.za/spark/"
-  master_address: 10.0.0.5
+spark_version: "2.3.3"
+spark_release_url: "http://apache.is.co.za/spark/"
+spark_master_address: 10.0.0.5
 
 ulimit:
   soft: 65536

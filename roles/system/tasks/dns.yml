@@ -2,3 +2,10 @@
 - name: 'Install dig'
   become: yes
   yum: name='bind-utils' state='present'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: 'Install dnsutils'
+  become: yes
+  apt: name='dnsutils'  state='present'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+

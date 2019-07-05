@@ -1,6 +1,13 @@
 resource "azurerm_resource_group" "rg" {
   name     = "${var.project}"
   location = "${var.location}"
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "${var.project}"
+    technical_owner = "${var.tech_owner}"
+    name = "${var.project}"
+  }
 }
 
 #spark master
@@ -94,6 +101,13 @@ resource "azurerm_virtual_machine" "slave" {
     host     = "${element(azurerm_public_ip.slave.*.ip_address, count.index)}"
     user     = "${var.vm_admin_username}"
     private_key = "${file("ssh_keys/id_rsa")}"
+  }
+
+  tags = {
+    environment = "${var.environment}"
+    purpose = "${var.vm_master_name}"
+    technical_owner = "${var.tech_owner}"
+    name = "${var.vm_master_name}"
   }
 
   provisioner "local-exec" {

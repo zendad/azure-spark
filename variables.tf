@@ -13,6 +13,11 @@ variable "environment" {
   default = "demo"
 }
 
+variable "tech_owner" {
+  description = "identity of person or group responsible for resource"
+  default = "devops"
+}
+
 variable "location" {
   description = "The location/region where project and resources are to be created. Changing this forces a new resource to be created."
   default     = "southcentralus"

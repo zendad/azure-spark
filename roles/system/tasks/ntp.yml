@@ -3,21 +3,49 @@
 - name: 'Install NTP Service'
   become: yes
   yum: name='ntp'  state='present'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: 'Install NTP Service'
+  become: yes
+  apt: name='ntp'  state='present'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: 'Install NTP date Service'
+  become: yes
+  apt: name='ntpdate'  state='present'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: 'Ensure NTP Enabled'
   become: yes
   service:
     name: ntpd
     enabled: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: 'Ensure NTP Stoped'
   become: yes
   service: name=ntpd state=stopped
-
-- name: 'Update NTP With AWS Time Server'
-  become: yes
-  shell: 'ntpdate 0.amazon.pool.ntp.org'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: 'Ensure NTP Started'
   become: yes
   service: name=ntpd state=started
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: 'Ensure NTP Enabled'
+  become: yes
+  service:
+    name: ntp
+    enabled: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: 'Ensure NTP Stoped'
+  become: yes
+  service: name=ntp state=stopped
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: 'Ensure NTP Started'
+  become: yes
+  service: name=ntp state=started
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
