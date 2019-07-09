@@ -1,9 +1,9 @@
 # Deploying Apache Spark on Azure
  
-This document details how to setup and manage a High Available, production ready Apache Spark cluster on Azure. This explores strategies that can be followed without much techinical details, its more of a guidance. It will show deployment tools to be used, monitoring tools and alerts for issues or problems. 
+This document details how to setup and manage a High Available, production ready Apache Spark cluster on Azure. This explores strategies that can be followed without much techinical details, its more of a guidance. It will show deployment tools to be used, monitoring tools and alerts. 
 
 Apache spark on azure can be deployed:
-1. Directly on VMs 
+1. Directly on VMs
 2. Using Azure HDInsight
 3. On Azure Kubernetes Service
 
@@ -18,13 +18,9 @@ Components of a Highly available Apache Spark:
     2. Masters
     3. Slaves or worker nodes
     
-Cluster manager: the entry point of the cluster management framework from where the resources necessary to run the job can be allocated. The Cluster Manager only supervises job execution, but does not run any data processing - this will run on the masters
-Spark executor: executors are running on the worker nodes and they are independent processes belonging to each job submitted to the cluster. These executors are responsible to do the actual data processing.
-Driver application: this is what the end-user creates and it contains the coded (Scala, Java, Python, R) logic that is to be executed on the Spark cluster. 
- 
 # Running Apache spark on Azure VMs
 ## Zookeeper Cluster 
-Zookeeper will be deployed in a cluster of nodes in an auto scaling set, with an ELB in front of the scale set. Nodes is a zookeeper cluster need to form a quorum.Quorum refers to the minimum number of nodes that need to agree on a transaction before it's committed. A quorum needs an odd number of nodes so that it can establish a majority. An even number of nodes may result in a tie, which would mean the nodes would not reach a majority or consensus. In a ZooKeeper cluster, if a leader dies the other remaining nodes will elect a leader among themselves.This will usually be very quick and there should be no visible outage to the clients. In a production environment, each ZooKeeper node should be run on a separate host. This prevents service disruption due to host hardware failure or reboots. This is an important and necessary architectural consideration for building a resilient and highly available distributed system
+Zookeeper will be deployed in a cluster of nodes in an auto scaling set, with an ELB in front of the scale set. Nodes is a zookeeper cluster need to form a quorum.Quorum refers to the minimum number of nodes that need to agree on a transaction before it's committed. A quorum needs an odd number of nodes so that it can establish a majority. An even number of nodes may result in a tie, which would mean the nodes would not reach a majority or consensus. In a ZooKeeper cluster, if a leader dies the other remaining nodes will elect a leader among themselves.This will usually be very quick and there should be no visible outage to the clients. In a production environment, each ZooKeeper node should be run on a separate host. This prevents service disruption due to host hardware failure or reboots. This is an important and necessary architectural consideration for building a resilient and highly available distributed system. The clients that were connected to the leader that died will reconnect to one of the other nodes. A new node should be able to auto discover the other nodes already in the cluster, the same with existing nodes, existing nodes would periodically check if a new node has been added/removed updated the startup script and restart zookeeper. This would be configured using cloud init and scriptng. The will follow a rolling update process. Each node knows the state of the cluster.[installing zookeeper](https://zookeeper.apache.org/doc/r3.1.2/zookeeperStarted.html) - this process will be automated through ansible for application and terraform for the infrastructure
 
 example of zoo.cfg configuration file to use:
 
@@ -44,8 +40,6 @@ On each node create a unique zookeeper id and store it in the “myid” file th
 
 `initLimit` specifies the time that the initial synchronization phase can take. This is the time within which each of the nodes in the quorum needs to connect to the leader. `syncLimit` specifies the time that can pass between sending a request and receiving an acknowledgment. This is the maximum time nodes can be out of sync from the leader. ZooKeeper nodes use a pair of ports, `:2888 and :3888`, for follower nodes to connect to the leader node and for leader election, respectively.
 
-The clients that were connected to the leader that died will reconnect to one of the other nodes. A new node should be able to auto discover the other nodes already in the cluster, the same with existing nodes, existing nodes would periodically check if a new node has been added/removed updated the startup script and restart zookeeper. This would be configured using cloud init and scriptng. The will follow a rolling update process. Each node knows the state of the cluster.
-
 ## Apache Spark Master
 Master nodes  will be deployed independently, each with a static ip,Each master need to be connected to the same ZooKeeper url/ip/ELB.
 In order to enable HA and recovery mode, create an `ha.conf`  using the following configuration:
@@ -61,6 +55,8 @@ example:
 ```
        start-master.sh -h localhost -p 7077 --webui-port 8080 --properties-file ha.conf
 ```
+This process will be automated through ansible for application and terraform for the infrastructure
+
 ## Apache Spark Slaves
 Spark slaves will be deployed in auto scaling sets, using a init config,intial set of 2 will be used, scaling based on cpu usage,memory. When starting the worker, you have to provide the reference to all the masters:
  example: 
@@ -72,19 +68,22 @@ Spark slaves will be deployed in auto scaling sets, using a init config,intial s
 ```
    spark-submit --master spark://master1:7077,master2:7077 
 ```
+This process will be automated through ansible for application and terraform for the infrastructure
+
 ## Deployment Process
-Terraform will used to deploy the infrastructure and ansible for the application and configuration management. A custom image will be deployed with packer, it will contain the spark and other customised scripts to manage the state of the VM.
+Terraform will used to deploy the infrastructure and ansible for the application and configuration management. A custom image will be deployed with packer, it will contain spark and other customised scripts to manage the state of the VM, a timer will used to check git for any changes to the scripts.
 1. customised script to manage zookeeper - at start up zookeeper cluster needs to know the number other machines in the cluster, this script coupled with ansible state configurations will maintain the zookeeper cluster 
 2. customised script to maintain the number of master nodes and run a azure template to create a new master if any of the existing ones are destroyed. This will be deployed thought terraform and ansible.
-3. The cluster can setup using [Apache Ambari](https://ambari.apache.org/), terraform will used to setup the infrastructure and Ambari to setup apache spark cluster. [Installation guide for Ambari including setting up an Apache Spark Cluster](https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.7.3)
+3. Another way to setup the apache sprk cluster is to use [Apache Ambari](https://ambari.apache.org/), terraform will used to setup the infrastructure, installation will follow procedures as defined on [[Apache Ambari] website](https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.7.3)
 
 # Running Apache Cluster Spark on Azure HDInsight
  Apache Spark in Azure HDInsight is the Microsoft implementation of Apache Spark in the cloud. HDInsight makes it easier to create and configure a Spark cluster in Azure. Spark clusters in HDInsight are compatible with Azure Storage and Azure Data Lake Storage
 
-As a managed service there re many are advantages of using this way:
+As a managed service there re many are advantages of deploying apache spark this way:
 1. Scalability - Azure allows you to make changes to the cluster without loss to data
 2. SLA - comes with microsoft support
 3. comes with other preloaded features
+
 source: [Azure HDInsight site](https://docs.microsoft.com/en-us/azure/hdinsight/spark/apache-spark-overview)
 
 ## Deployment Process
@@ -92,15 +91,14 @@ source: [Azure HDInsight site](https://docs.microsoft.com/en-us/azure/hdinsight/
 This can easily be deployed using the terraform azurerm_hdinsight_cluster module or templates that would specify the size instances and storage to be used in the cluster.
 
 # Running Apache Spark Cluster on Azure Kubernetes Service
-Spark can run on clusters managed by Kubernetes. This feature makes use of native Kubernetes scheduler that has been added to Spark, this is still experimental within kubernetes. The kubernetes nodes should be a minimum of size of Standard_D3_v2 in Azure.
-ref[Azure example](https://docs.microsoft.com/en-us/azure/aks/spark-job)
+Spark can run on clusters managed by Kubernetes. This feature makes use of native Kubernetes scheduler that has been added to Spark. The kubernetes nodes should be a minimum of size of Standard_D3_v2 in Azure. Procedures for doing this can be found on the [Apache Spark Website](https://spark.apache.org/docs/latest/running-on-kubernetes.html)
 
 ## Deployment Process
-The kubernetes will be deployed with terraform as defined [here](https://docs.microsoft.com/en-us/azure/terraform/terraform-create-k8s-cluster-with-tf-and-aks) and [examples of ways of deploying AKS](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/kubernetes). The apache spark cluster itself will be deployed using helm charts run through ansible.
+The kubernetes will be deployed with terraform as defined [here](https://docs.microsoft.com/en-us/azure/terraform/terraform-create-k8s-cluster-with-tf-and-aks) and [can follow this examples for deploying AKS](https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/kubernetes). The apache spark cluster itself will be deployed using helm charts run through ansible.
 
 # Apache Spark Monitoring
 1. [Datadog](https://docs.datadoghq.com/integrations/spark/) & [Opsgenie](https://www.atlassian.com/software/opsgenie/datadog) - datadog is managed on cloud monitoring tool that provides an agent and configurations which has to be installed on the cluster that can properly monitor an apache spark cluster including jobs and processes. It can generate alerts which can be integrated with opsgenie for alerting, on call rotation management and escalations 
-2. [Prometheus][https://prometheus.io/]  - a prometheus monitoring cluster can be used to monitor the apache spark cluster. This can be inside the kubernetes cluster or on separate vms when the cluster in deployed through hdinsight or on vms. Prometheus provides metrics and alerts for the cluster, graphs can be built using grafana showing perfomance on different parts of the cluster.
+2. [Prometheus][https://prometheus.io/]  - a prometheus monitoring cluster can be used to monitor the apache spark cluster. This can be inside the kubernetes cluster or on separate VMs when the cluster in deployed through hdinsight or on VMs. Prometheus provides metrics and alerts for the cluster, graphs can be built using grafana showing perfomance on different areas of the cluster.
 3. [Apache Ambari](https://ambari.apache.org/) - The Apache Ambari project is aimed at making Hadoop management simpler by developing software for provisioning, managing, and monitoring Apache Hadoop clusters. Ambari provides an intuitive, easy-to-use Hadoop management web UI backed by its RESTful APIs
       ```
     Ambari enables System Administrators to:
