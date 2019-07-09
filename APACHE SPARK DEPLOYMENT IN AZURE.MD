@@ -116,6 +116,7 @@ The kubernetes will be deployed with terraform as defined [here](https://docs.mi
     Easily integrate Hadoop provisioning, management, and monitoring capabilities to their own applications with the Ambari REST APIs.
       ```
 source: [Apache Ambari Website](https://ambari.apache.org/)
+
 source: [installation guide for Ambari including setting up a cluster for monitoring](https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.7.3)
 
 # Summary
