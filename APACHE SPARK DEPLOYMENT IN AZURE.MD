@@ -98,7 +98,7 @@ The kubernetes will be deployed with terraform as defined [here](https://docs.mi
 
 # Apache Spark Monitoring
 1. [Datadog](https://docs.datadoghq.com/integrations/spark/) & [Opsgenie](https://www.atlassian.com/software/opsgenie/datadog) - datadog is managed on cloud monitoring tool that provides an agent and configurations which has to be installed on the cluster that can properly monitor an apache spark cluster including jobs and processes. It can generate alerts which can be integrated with opsgenie for alerting, on call rotation management and escalations 
-2. [Prometheus][https://prometheus.io/]  - a prometheus monitoring cluster can be used to monitor the apache spark cluster. This can be inside the kubernetes cluster or on separate VMs when the cluster in deployed through hdinsight or on VMs. Prometheus provides metrics and alerts for the cluster, graphs can be built using grafana showing perfomance on different areas of the cluster.
+2. [Prometheus](https://prometheus.io/)  - a prometheus monitoring cluster can be used to monitor the apache spark cluster. This can be inside the kubernetes cluster or on separate VMs when the cluster in deployed through hdinsight or on VMs. Prometheus provides metrics and alerts for the cluster, graphs can be built using grafana showing perfomance on different areas of the cluster.
 3. [Apache Ambari](https://ambari.apache.org/) - The Apache Ambari project is aimed at making Hadoop management simpler by developing software for provisioning, managing, and monitoring Apache Hadoop clusters. Ambari provides an intuitive, easy-to-use Hadoop management web UI backed by its RESTful APIs
       ```
     Ambari enables System Administrators to:
@@ -116,7 +116,7 @@ The kubernetes will be deployed with terraform as defined [here](https://docs.mi
     Easily integrate Hadoop provisioning, management, and monitoring capabilities to their own applications with the Ambari REST APIs.
       ```
 source: [Apache Ambari Website](https://ambari.apache.org/)
-[installation guide for Ambari including setting up a cluster for monitoring](https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.7.3)
+source: [installation guide for Ambari including setting up a cluster for monitoring](https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.7.3)
 
 # Summary
 When deciding how to deploy apache spark cluster, the following has to be considered:
