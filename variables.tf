@@ -1,6 +1,6 @@
 provider "azurerm" {
-    subscription_id = "bfc354ee-7eef-4a2c-9455-958c92cbef48"
-    client_id       = "4b79b699-6a0c-476a-8f2d-7f9e9488abdb"
+    subscription_id = "xxxxxxxx"
+    client_id       = "xxxxxxxx"
 }
 
 variable "project" {
