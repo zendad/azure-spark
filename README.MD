@@ -11,14 +11,15 @@ Note that this is intended to be a demonstration and it **does not** set up a pr
 for anyone who wants to try the functionality of such a setup.
 
 # Requirements
-1. subcription details for Azure, this can be setup using the azure cli, when login to a device is done through the shell, only the subscription_id and client_id will be required to run the terraform scripts.
+1. ansible and terraform have to be installed on the machine to run this code.
+2. subcription details for Azure, this can be setup using the azure cli, when login to a device is done through the shell, only the subscription_id and client_id will be required to run the terraform scripts.
 ```
     subscription_id = "xxxxxxxx"
     client_id       = "xxxxxxxx"
 ```
-2. ssh_keys - generate ssh keys for logging to the servers once they have been created
-3. variables.tf - variables defined in this file are for testing purposes only and these can be changed.
-4. ansible variables defined in `group_vars/all.yml` this include scala version, spark version to be installed and static ip being used for the master
+3. ssh_keys - generate ssh keys for logging to the servers once they have been created
+4. variables.tf - variables defined in this file are for testing purposes only and these can be changed.
+5. ansible variables defined in `group_vars/all.yml` this include scala version, spark version to be installed and static ip being used for the master
 
 # Tools
 ## 1. Terraform
