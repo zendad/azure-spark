@@ -54,7 +54,7 @@ resource "azurerm_virtual_machine" "master" {
   }
 
   provisioner "local-exec" {
-    command ="ansible-playbook  -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa.pub --user ${var.vm_admin_username}"
+    command ="export ANSIBLE_HOST_KEY_CHECKING=False && ansible-playbook  -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa.pub --user ${var.vm_admin_username}"
   }
 }
 
@@ -111,6 +111,6 @@ resource "azurerm_virtual_machine" "slave" {
   }
 
   provisioner "local-exec" {
-    command ="ansible-playbook -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa --user ${var.vm_admin_username}"
+    command ="export ANSIBLE_HOST_KEY_CHECKING=False && ansible-playbook -i hosts.ini deploy.yml --private-key=ssh_keys/id_rsa --user ${var.vm_admin_username}"
   }
 }
